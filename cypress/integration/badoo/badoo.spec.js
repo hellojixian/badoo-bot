@@ -1,4 +1,4 @@
-const LIKE_COUNT = 1
+const LIKE_COUNT = 30
 
 context('Badoo Auth', () => {
   beforeEach(() => {
