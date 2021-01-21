@@ -1,1 +1,6 @@
-{}
+{
+  "baseUrl": "https://eu1.badoo.com",
+  "blockHosts": ["www.googletagmanager.com"],
+  "env": {
+  }
+}

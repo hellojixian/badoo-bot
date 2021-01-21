@@ -18,3 +18,14 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+import * as dotenv from 'dotenv'
+dotenv.config()
+
+Cypress.on('window:before:load', (win) => {
+  Object.defineProperty(win, 'self', {
+    get: () => {
+      return window.top
+    }
+  })
+})
