@@ -42,8 +42,15 @@ context('Badoo Auth', () => {
         .trigger('keyup', {keyCode:49, key:'1'})
         .wait(1000)
         .get('html').then(body => {
+          // handle the push notification popup
           if(body.find('.js-chrome-pushes-allow').length) {
-            return cy.get('.js-chrome-pushes-allow').click()
+            cy.get('.js-chrome-pushes-allow').click()
+          }
+          // handle matches
+          if(body.find('.js-ovl-content .text-field input').length) {
+             cy.get('.js-ovl-content .text-field input')
+              .type('Hi! So happy to meet you!').wait(1000)
+              .get('.js-ovl-content .js-send-message').click()
           }
         })
     }
