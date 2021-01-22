@@ -1,4 +1,5 @@
-const LIKE_COUNT = 30
+const LIKE_COUNT = 300
+const CITY = 'kyiv'
 
 context('Badoo Auth', () => {
   beforeEach(() => {
@@ -25,7 +26,7 @@ context('Badoo Auth', () => {
     cy.viewport(1200,800)
       .get('a.sidebar-info__userpic').click()
       .get('.js-profile-location-container div.js-profile-edit-block-toggle').click()
-      .get('.js-profile-location-container .text-field input').type('Odesa').click().wait(1000)
+      .get('.js-profile-location-container .text-field input').type(CITY).click().wait(1000)
       .get('.js-profile-location-container li.option:first').click()
       .get('.js-profile-location-container .js-profile-location-edit-save').click()
   })
@@ -46,9 +47,13 @@ context('Badoo Auth', () => {
           if(body.find('.js-chrome-pushes-allow').length) {
             cy.get('.js-chrome-pushes-allow').click()
           }
+          // handle another device login popup
+          if(body.find('.js-continue').length) {
+            cy.get('.js-continue').click()
+          }
           // handle matches
           if(body.find('.js-ovl-content .text-field input').length) {
-             cy.get('.js-ovl-content .text-field input')
+            cy.get('.js-ovl-content .text-field input')
               .type('Hi! So happy to meet you!').wait(1000)
               .get('.js-ovl-content .js-send-message').click()
           }
