@@ -6,6 +6,9 @@ Cypress.Commands.add("login", () => {
       return cy.get('input[name=email]').clear({force: true}).type(Cypress.env('BADOO_ACCOUNT'))
       .get('input[name=password]').clear({force: true}).type(Cypress.env('BADOO_PASSWD'))
       .get('button[type=submit]').click()
+      .then(() => {
+        cy.wait(2000)
+      })
     }
   })
 })
