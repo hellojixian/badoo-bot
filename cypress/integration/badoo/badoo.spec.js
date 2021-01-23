@@ -1,63 +1,57 @@
-const LIKE_COUNT = 300
-const CITY = 'kyiv'
+import { getCities } from '../../libs/getCities'
 
-context('Badoo Auth', () => {
+const TIMEZONE_DATA = require('../../fixtures/timezones.json')
+const LIKE_COUNT = 10
+
+context('Badoo Bot', () => {
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('session', 'device_id', 'HDR-X-User-id', 'cookie_settings')
   })
 
-  it('Ensure login', () => {
-    cy.visit('/signin')
-      .viewport(1200,800)
-    cy.location().then((location) => {
-      if (location.pathname === '/signin') {
-        cy.get('input[name=email]').clear({force: true}).type(Cypress.env('BADOO_ACCOUNT'))
-        .get('input[name=password]').clear({force: true}).type(Cypress.env('BADOO_PASSWD'))
-        .get('button[type=submit]').click()
-        .then(() => {
-          cy.url().should('contain', '/encounters/')
-          cy.get('.sidebar-info__signout').should('exist')
-        })
-      }
+  it('Ensure login', cy.login)
+
+  getCities(TIMEZONE_DATA).forEach(city => {
+    it(`switch city to ${city}`, () => {
+      cy.setCity(city)
     })
-  })
 
-  it('set location', () => {
-    cy.viewport(1200,800)
-      .get('a.sidebar-info__userpic').click()
-      .get('.js-profile-location-container div.js-profile-edit-block-toggle').click()
-      .get('.js-profile-location-container .text-field input').type(CITY).click().wait(1000)
-      .get('.js-profile-location-container li.option:first').click()
-      .get('.js-profile-location-container .js-profile-location-edit-save').click()
-  })
+    it(`should open the encounter page`, () => {
+      cy.visit('/encounters')
+    })
 
-  it(`should send a like ${LIKE_COUNT} times`, () => {
-
-    cy.visit('/encounters')
+    let no_more_match = false
     for (let i=0; i<LIKE_COUNT; i++) {
-      cy.get('html')
-        .trigger('keyup', {keyCode:32, key:' '})
-        .wait(1000)
-        .trigger('keyup', {keyCode:32, key:' '})
-        .wait(1000)
-        .trigger('keyup', {keyCode:49, key:'1'})
-        .wait(1000)
-        .get('html').then(body => {
-          // handle the push notification popup
-          if(body.find('.js-chrome-pushes-allow').length) {
-            cy.get('.js-chrome-pushes-allow').click()
-          }
-          // handle another device login popup
-          if(body.find('.js-continue').length) {
-            cy.get('.js-continue').click()
-          }
-          // handle matches
-          if(body.find('.js-ovl-content .text-field input').length) {
-            cy.get('.js-ovl-content .text-field input')
-              .type('Hi! So happy to meet you!').wait(1000)
-              .get('.js-ovl-content .js-send-message').click()
-          }
-        })
+      it(`should send a like times ${i}/${LIKE_COUNT}`, () => {
+        if (no_more_match) return
+        cy.get('html')
+          .trigger('keyup', {keyCode:32, key:' '})
+          .wait(1000)
+          .trigger('keyup', {keyCode:32, key:' '})
+          .wait(1000)
+          .trigger('keyup', {keyCode:49, key:'1'})
+          .wait(1000)
+          .get('html').then(body => {
+            // handle the push notification popup
+            if(body.find('.js-chrome-pushes-allow').length) {
+              cy.get('.js-chrome-pushes-allow').click()
+            }
+            // handle another device login popup
+            if(body.find('.js-continue').length) {
+              cy.get('.js-continue').click()
+            }
+            // handle matches
+            if(body.find('.js-ovl-content .text-field input').length) {
+              cy.get('.js-ovl-content .text-field input')
+                .type('Hi! So happy to meet you!').wait(1000)
+                .get('.js-ovl-content .js-send-message').click()
+            }
+            // handle no more matches
+            if(body.find('.js-import-contacts-items').length) {
+              no_more_match = true
+              return
+            }
+          })
+      })
     }
-  })
-})
+  }) //close getCities
+}) //close context
