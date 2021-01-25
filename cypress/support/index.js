@@ -18,6 +18,7 @@ import './commands'
 import './login'
 import './set_location'
 import './send_like'
+import './chat'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 

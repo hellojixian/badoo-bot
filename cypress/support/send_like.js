@@ -21,11 +21,5 @@ Cypress.Commands.add("sendLike", () => {
           .type('Hi! So happy to meet you!').wait(1000)
           .get('.js-ovl-content .js-send-message').click()
       }
-      // handle no more matches
-      if(body.find('.js-import-contacts-items').length) {
-        no_more_match = true
-        return no_more_match
-      }
-      return false
     })
 })
